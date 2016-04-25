@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -215,9 +216,18 @@ public class MainActivity extends AppCompatActivity {
             executeTask();
             return true;
         }
-
+        if (id == R.id.share) {
+            shareNews();
+        }
         return super.onOptionsItemSelected(item);
     }
+    private void shareNews() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Put Data Here");
+        startActivity(Intent.createChooser(shareIntent, "Share using"));
+    }
+
     public void executeTask(){
         MovieTask task = new MovieTask();
         task.execute(currentState);
