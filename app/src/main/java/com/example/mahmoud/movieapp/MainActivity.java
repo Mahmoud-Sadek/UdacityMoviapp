@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     static TextView titel;
     static ImageView poster;
     String id;
+    String title;
+    String overview;
     static View fragDetail;
     static String currentState ="popular?";
     @Override
@@ -102,8 +105,10 @@ public class MainActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
+        int screenSize = getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK;
         //Screen large also ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        if(size.x>size.y){
+        if(size.x>size.y  || screenSize == Configuration.SCREENLAYOUT_SIZE_LARGE ||screenSize == Configuration.SCREENLAYOUT_SIZE_XLARGE ){
             View viewGroup = (View) findViewById(R.id.fragment2);
             viewGroup.setVisibility(View.INVISIBLE);
             largeScreen=true;
@@ -127,10 +132,10 @@ public class MainActivity extends AppCompatActivity {
                     Deatail.putExtra("id", movieData[i].getId());
                     startActivity(Deatail);
                 }else {
-                    String title =movieData[i].getTitel();
+                    title =movieData[i].getTitel();
                     String date = movieData[i].getDate();
                     String vote = movieData[i].getVote();
-                    String overview = movieData[i].getOverview();
+                    overview = movieData[i].getOverview();
                     id = movieData[i].getId();
                     fragDetail.setVisibility(View.VISIBLE);
                     String baseUrl = "http://image.tmdb.org/t/p/w185";
@@ -224,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     private void shareNews() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Put Data Here");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, title + "\n" + overview);
         startActivity(Intent.createChooser(shareIntent, "Share using"));
     }
 

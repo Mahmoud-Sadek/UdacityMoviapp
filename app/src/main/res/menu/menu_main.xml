@@ -17,10 +17,4 @@
         android:orderInCategory="100"
         android:title="Favorite"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/share"
-        android:orderInCategory="100"
-        android:title="Share"
-        app:showAsAction="always"
-        android:actionProviderClass="android.widget.ShareActionProvider"/>
     </menu>

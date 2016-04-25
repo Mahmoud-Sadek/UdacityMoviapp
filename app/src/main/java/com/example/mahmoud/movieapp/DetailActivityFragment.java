@@ -123,18 +123,6 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 
-    public void landFrag() {
-        MovieTask task = new MovieTask();
-        task.execute(id);
-        trailergGridView = (GridView) view.findViewById(R.id.trailer_view);
-        trailergGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieArrayList.get(i))));
-            }
-        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -146,7 +134,7 @@ public class DetailActivityFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-    private void shareNews() {
+    public void shareNews() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, title + "\n" + overview);
