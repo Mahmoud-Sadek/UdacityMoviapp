@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.mahmoud.movieapp.DetailActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/share"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="Share"
+        app:showAsAction="always"
+        android:actionProviderClass="android.widget.ShareActionProvider"/>
 </menu>

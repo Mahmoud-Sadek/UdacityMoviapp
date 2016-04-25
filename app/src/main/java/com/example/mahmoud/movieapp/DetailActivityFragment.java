@@ -9,6 +9,9 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -103,6 +106,7 @@ public class DetailActivityFragment extends Fragment {
             });
 
         }
+        this.setHasOptionsMenu(true);
         return view;
     }
     public static void favBtn(){
@@ -131,6 +135,23 @@ public class DetailActivityFragment extends Fragment {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.share) {
+            shareNews();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void shareNews() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, title + "\n" + overview);
+        startActivity(Intent.createChooser(shareIntent, "Share using"));
+    }
         public class MovieTask extends AsyncTask<String, Void, String[]> {
 
         @Override

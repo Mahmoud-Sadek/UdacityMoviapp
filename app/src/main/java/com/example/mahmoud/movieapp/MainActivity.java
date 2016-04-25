@@ -154,15 +154,15 @@ public class MainActivity extends AppCompatActivity {
                     });
 
 //                    final DetailActivityFragment c = new DetailActivityFragment();
-                    GridView trailergGridView = (GridView) view.findViewById(R.id.trailer_view);
-                    MovieTask task = new MovieTask();
+                    trailergGridView = (GridView) findViewById(R.id.trailer_view);
+                    MovieTask2 task = new MovieTask2();
                     task.execute(id);
-//                    trailergGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                        @Override
-//                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieArrayList.get(i))));
-//                        }
-//                    });
+                    trailergGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieArrayList.get(i))));
+                        }
+                    });
                 }
             }
         });
