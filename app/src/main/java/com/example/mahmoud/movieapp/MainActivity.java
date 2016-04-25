@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 final String APPID_PARAM = "api_key";
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
+                        .appendQueryParameter(APPID_PARAM, "")
                         .build();
                 URL url = new URL(builtUri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
+                        .appendQueryParameter(APPID_PARAM, "")
                         .build();
 
                 URL url = new URL(builtUri.toString());
