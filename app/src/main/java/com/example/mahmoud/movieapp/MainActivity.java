@@ -89,25 +89,19 @@ public class MainActivity extends AppCompatActivity {
         ov_text = ((TextView) findViewById(R.id.movie_overview_text));
         gridView = (GridView) findViewById(R.id.grid_view);
         if(isNetworkAvailable()){
-            Toast.makeText(getBaseContext(), "Network Available", Toast.LENGTH_SHORT).show();
             executeTask();
         }
         else{
-            Toast.makeText(getBaseContext(), "No Network Available", Toast.LENGTH_SHORT).show();
-//            movieArrayList =DataBase.getAllData();
-            movieAdapter = new MovieAdapter(getBaseContext(), movieData);
-            gridView.setAdapter(movieAdapter);
+            Toast.makeText(getBaseContext(), "No Network Available", Toast.LENGTH_LONG).show();
         }
 
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        WindowManager wm = getWindowManager();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int screenSize = getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK;
-        //Screen large also ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         if(size.x>size.y  || screenSize == Configuration.SCREENLAYOUT_SIZE_LARGE ||screenSize == Configuration.SCREENLAYOUT_SIZE_XLARGE ){
             View viewGroup = (View) findViewById(R.id.fragment2);
             viewGroup.setVisibility(View.INVISIBLE);
@@ -184,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentState = savedInstanceState.getString("state");
+        if(currentState == null){
+            currentState= "popular?";
+        }
         executeTask();
     }
 
@@ -227,10 +224,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     private void shareNews() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, title + "\n" + overview);
-        startActivity(Intent.createChooser(shareIntent, "Share using"));
+        if (title == null) {
+            Toast.makeText(getBaseContext(), "Sorry you should Choose Film", Toast.LENGTH_LONG).show();
+        } else {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, title + "\n" + overview);
+            startActivity(Intent.createChooser(shareIntent, "Share using"));
+        }
     }
 
     public void executeTask(){
