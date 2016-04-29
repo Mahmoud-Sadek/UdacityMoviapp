@@ -21,12 +21,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         vote_text = ((TextView) findViewById(R.id.movie_averge_text));
         ov_text = ((TextView) findViewById(R.id.movie_overview_text));
         gridView = (GridView) findViewById(R.id.grid_view);
+
         if(isNetworkAvailable()){
             executeTask();
         }
@@ -143,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
                     titel.setText(title);
                     date_text.setText(date);
                     vote_text.setText(vote);
-                    ov_text.setText(overview);
+//                    ov_text.setText(overview);
                     final Button favorite = (Button) findViewById(R.id.favorite);
+
                     favorite.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -156,9 +156,12 @@ public class MainActivity extends AppCompatActivity {
                     trailergGridView = (GridView) findViewById(R.id.trailer_view);
                     MovieTask2 task = new MovieTask2();
                     task.execute(id);
+                    MovieTask3 task2 = new MovieTask3();
+                    task2.execute(id);
                     trailergGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieArrayList.get(i))));
                         }
                     });
@@ -260,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 final String APPID_PARAM = "api_key";
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, "")
+                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
                         .build();
                 URL url = new URL(builtUri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -381,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, "")
+                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -471,4 +474,109 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public class MovieTask3 extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Log.d("message", "message");
+            String FORECAST_BASE_URL =
+                    "http://api.themoviedb.org/3/movie/"+ params[0]+"/reviews?";
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String JsonStr = null;
+
+
+            try {
+
+                final String APPID_PARAM = "api_key";
+
+                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    Log.d("message", "InputStream");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    Log.d("message", "buffer");
+
+                    return null;
+                }
+                JsonStr = buffer.toString();
+            } catch (IOException e) {
+                Log.e("error", "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("error", "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                Log.d("message", "data");
+
+                return getDataFromJson(JsonStr);
+            } catch (JSONException e) {
+                Log.e("error", e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            // This will only happen if there was an error getting or parsing the forecast.
+            Log.d("message", "null");
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String movie) {
+            if (movie != null) {
+                ov_text.setText(movie);
+            }
+        }
+
+        private String getDataFromJson(String jsonStr) throws JSONException {
+            final String M_LIST = "results";
+            final String author = "author";
+            final String content = "content";
+            JSONObject movieJson = new JSONObject(jsonStr);
+            JSONArray movieArray = movieJson.getJSONArray(M_LIST);
+
+            String review = null;
+
+            for (int i = 0; i < movieArray.length(); i++) {
+                JSONObject movie = movieArray.getJSONObject(i);
+                String auther = movie.getString(author);
+                String contnt = movie.getString(content);
+                review = auther+"\n"+contnt;
+            }
+            return review;
+        }
+
+    }
 }

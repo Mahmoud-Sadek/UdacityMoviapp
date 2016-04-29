@@ -40,6 +40,7 @@ import java.util.ArrayList;
  */
 public class DetailActivityFragment extends Fragment {
 
+    TextView ov;
     Intent back;
     static String poster_url;
     static String title;
@@ -74,10 +75,12 @@ public class DetailActivityFragment extends Fragment {
             title = back.getStringExtra("title");
             date_ = back.getStringExtra("date");
             vote_ = back.getStringExtra("vote");
-            overview = back.getStringExtra("ov");
+//            overview = back.getStringExtra("ov");
             id = back.getStringExtra("id");
             MovieTask task = new MovieTask();
             task.execute(id);
+            MovieTask3 task2 = new MovieTask3();
+            task2.execute(id);
             ImageView poster = (ImageView) view.findViewById(R.id.movie_image);
             String baseUrl = "http://image.tmdb.org/t/p/w185";
             poster_url = baseUrl+poster_url;
@@ -87,8 +90,8 @@ public class DetailActivityFragment extends Fragment {
             TextView date = ((TextView) view.findViewById(R.id.movie_date_text));
             date.setText(date_);
             TextView vote = ((TextView) view.findViewById(R.id.movie_averge_text));
-            vote.setText(vote_);
-            TextView ov = ((TextView) view.findViewById(R.id.movie_overview_text));
+//            vote.setText(vote_);
+            ov = ((TextView) view.findViewById(R.id.movie_overview_text));
             ov.setText(overview);
             final Button favorite = (Button) view.findViewById(R.id.favorite);
             favorite.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +121,6 @@ public class DetailActivityFragment extends Fragment {
             } else
                 Toast.makeText(context, "Error In Insert Data", Toast.LENGTH_SHORT).show();
         } else {
-            Snackbar.make(view, "Already Favorite:::", Snackbar.LENGTH_INDEFINITE).setAction("Action", null).show();
             Toast.makeText(context, "Favorite Already", Toast.LENGTH_SHORT).show();
         }
     }
@@ -246,6 +248,112 @@ public class DetailActivityFragment extends Fragment {
                 results[i] = poster_key;
             }
             return results;
+        }
+
+    }
+
+    public class MovieTask3 extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Log.d("message", "message");
+            String FORECAST_BASE_URL =
+                    "http://api.themoviedb.org/3/movie/"+ params[0]+"/reviews?";
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String JsonStr = null;
+
+
+            try {
+
+                final String APPID_PARAM = "api_key";
+
+                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(APPID_PARAM, "9490ec35a6eea2efe32378982073f7a3")
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    Log.d("message", "InputStream");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    Log.d("message", "buffer");
+
+                    return null;
+                }
+                JsonStr = buffer.toString();
+            } catch (IOException e) {
+                Log.e("error", "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("error", "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                Log.d("message", "data");
+
+                return getDataFromJson(JsonStr);
+            } catch (JSONException e) {
+                Log.e("error", e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            // This will only happen if there was an error getting or parsing the forecast.
+            Log.d("message", "null");
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String movie) {
+            if (movie != null) {
+                ov.setText(movie);
+            }
+        }
+
+        private String getDataFromJson(String jsonStr) throws JSONException {
+            final String M_LIST = "results";
+            final String author = "author";
+            final String content = "content";
+            JSONObject movieJson = new JSONObject(jsonStr);
+            JSONArray movieArray = movieJson.getJSONArray(M_LIST);
+
+            String review = null;
+
+            for (int i = 0; i < movieArray.length(); i++) {
+                JSONObject movie = movieArray.getJSONObject(i);
+                String auther = movie.getString(author);
+                String contnt = movie.getString(content);
+                review = auther+"\n"+contnt;
+            }
+            return review;
         }
 
     }
