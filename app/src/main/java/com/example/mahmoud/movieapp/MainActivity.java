@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     titel.setText(title);
                     date_text.setText(date);
                     vote_text.setText(vote);
+                    
 //                    ov_text.setText(overview);
                     final Button favorite = (Button) findViewById(R.id.favorite);
 
