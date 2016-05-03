@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(savedInstanceState != null ){
+            currentState = savedInstanceState.getString("state");
+        }else {
+            MovieData.state = "popular?";
+            currentState = MovieData.state;
+        }
         context = getBaseContext();
         fragDetail =findViewById(R.id.fragment2);
         poster = (ImageView) findViewById(R.id.movie_image);
@@ -142,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     titel.setText(title);
                     date_text.setText(date);
                     vote_text.setText(vote);
-                    
+
 //                    ov_text.setText(overview);
                     final Button favorite = (Button) findViewById(R.id.favorite);
 
@@ -175,18 +181,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        outState.putString("state", currentState);
+        outState.putString("state", MovieData.state);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        currentState = savedInstanceState.getString("state");
-        if(currentState == null){
-            currentState= "popular?";
-        }
-        executeTask();
-    }
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        currentState = savedInstanceState.getString("state");
+//        if(currentState == null){
+//            currentState= "popular?";
+//        }
+//        executeTask();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -212,12 +218,14 @@ public class MainActivity extends AppCompatActivity {
         }
         if(id==R.id.top_rated_menu){
             Toast.makeText(context, "top rated ", Toast.LENGTH_LONG).show();
+            MovieData.state = "top_rated?";
             currentState = "top_rated?";
             executeTask();
             return true;
         }
         if(id==R.id.popular_menu){
             Toast.makeText(context, "Popular ", Toast.LENGTH_LONG).show();
+            MovieData.state ="popular?";
             currentState = "popular?";
             executeTask();
             return true;
@@ -240,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void executeTask(){
         MovieTask task = new MovieTask();
-        task.execute(currentState);
+        task.execute(MovieData.state);
     }
 
     private boolean isNetworkAvailable() {

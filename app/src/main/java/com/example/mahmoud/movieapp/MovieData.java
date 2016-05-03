@@ -10,6 +10,7 @@ public class MovieData {
     private String date;
     private String vote;
     private String overview;
+    static String state;
 
     public String getPoster_url() {
         return poster_url;
